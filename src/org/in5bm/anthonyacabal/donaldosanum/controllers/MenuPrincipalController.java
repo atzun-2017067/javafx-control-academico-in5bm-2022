@@ -47,6 +47,11 @@ public class MenuPrincipalController implements Initializable{
     }
     
     @FXML
+    void clicHorarios(ActionEvent event) throws IOException {
+        escenarioPrincipal.mostrarEscenaHorarios();
+    }
+    
+    @FXML
     void clicAsignacionAlumnos(ActionEvent event) throws IOException {
         escenarioPrincipal.mostrarEscenaAsignacionAlumnos();
     }

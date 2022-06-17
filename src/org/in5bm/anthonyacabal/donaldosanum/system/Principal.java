@@ -13,6 +13,7 @@ import org.in5bm.anthonyacabal.donaldosanum.controllers.AlumnosController;
 import org.in5bm.anthonyacabal.donaldosanum.controllers.AsignacionAlumnosController;
 import org.in5bm.anthonyacabal.donaldosanum.controllers.CarrerasTecnicasController;
 import org.in5bm.anthonyacabal.donaldosanum.controllers.CursosController;
+import org.in5bm.anthonyacabal.donaldosanum.controllers.HorariosController;
 import org.in5bm.anthonyacabal.donaldosanum.controllers.InstructoresController;
 import org.in5bm.anthonyacabal.donaldosanum.controllers.SalonesController;
 import org.in5bm.anthonyacabal.donaldosanum.controllers.MenuPrincipalController;
@@ -199,9 +200,20 @@ public class Principal extends Application {
         
     }
     
+    public void mostrarEscenaHorarios() {
+        try {
+            HorariosController horarios = (HorariosController) cambiarEscena("HorariosView.fxml");
+            horarios.setEscenarioPrincipal(this);
+        } catch (Exception ex) {
+            System.err.println("\nSe produjo un error al intentar mostrar la vista de Horarios");
+            ex.printStackTrace();
+        }
+        
+    }
+    
     public void mostrarEscenaAsignacionAlumnos() {
         try {
-            AsignacionAlumnosController asignacionAlumnosController = (AsignacionAlumnosController) cambiarEscena("AsignacionAlumnosView.fxml");
+            AsignacionAlumnosController asignacionAlumnosController = (AsignacionAlumnosController) cambiarEscena("AsignacionesAlumnosView.fxml");
             asignacionAlumnosController.setEscenarioPrincipal(this);
         } catch (Exception ex) {
             System.err.println("\nSe produjo un error al intentar mostrar la vista de Asignacion Alumnos");

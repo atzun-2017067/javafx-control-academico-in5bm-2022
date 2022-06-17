@@ -2,13 +2,12 @@ package org.in5bm.anthonyacabal.donaldosanum.controllers;
 
 import com.jfoenix.controls.JFXDatePicker;
 import java.net.URL;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -73,7 +73,7 @@ public class InstructoresController implements Initializable {
 
     @FXML
     private TextField txtTelefono;
-    
+
     @FXML
     private JFXDatePicker dpFechaNacimiento;
 
@@ -189,7 +189,7 @@ public class InstructoresController implements Initializable {
 
             txtTelefono.setText(((Instructores) tblInstructores.getSelectionModel().getSelectedItem()).getTelefono());
 
-            //dpFechaNacimiento.setString.valueOf(((Instructores) tblInstructores.getSelectionModel().getSelectedItem()).getFechaNacimiento()));
+            dpFechaNacimiento.setValue(((Instructores) tblInstructores.getSelectionModel().getSelectedItem()).getFechaNacimiento());
         }
 
     }
@@ -197,7 +197,6 @@ public class InstructoresController implements Initializable {
     public boolean agregarInstructor() {
         Instructores instructores = new Instructores();
 
-        instructores.setId(Integer.valueOf(txtId.getText()));
         instructores.setNombre1(txtNombre1.getText());
         instructores.setNombre2(txtNombre2.getText());
         instructores.setNombre3(txtNombre3.getText());
@@ -206,29 +205,27 @@ public class InstructoresController implements Initializable {
         instructores.setDireccion(txtDireccion.getText());
         instructores.setEmail(txtEmail.getText());
         instructores.setTelefono(txtTelefono.getText());
-        
-        LocalDate fecha = dpFechaNacimiento.getValue(); 
-        java.sql.Date fecha2 = java.sql.Date.valueOf(dpFechaNacimiento.getValue().toString());
-        
-        instructores.setFechaNacimiento(fecha2);
-        
-        
+
+        /*LocalDate fecha = dpFechaNacimiento.getValue();
+        java.sql.Date fecha2 = java.sql.Date.valueOf(dpFechaNacimiento.getValue().toString());*/
+
+        instructores.setFechaNacimiento(dpFechaNacimiento.getValue());
+
         PreparedStatement pstmt = null;
 
         try {
 
-            pstmt = Conexion.getInstance().getConexion().prepareCall("{call sp_instructores_create(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
+            pstmt = Conexion.getInstance().getConexion().prepareCall("{call sp_instructores_create(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
 
-            pstmt.setInt(1, instructores.getId());
-            pstmt.setString(2, instructores.getNombre1());
-            pstmt.setString(3, instructores.getNombre2());
-            pstmt.setString(4, instructores.getNombre3());
-            pstmt.setString(5, instructores.getApellido1());
-            pstmt.setString(6, instructores.getApellido2());
-            pstmt.setString(7, instructores.getDireccion());
-            pstmt.setString(8, instructores.getEmail());
-            pstmt.setString(9, instructores.getTelefono());
-            pstmt.setString(10, instructores.getFechaNacimiento().toString());
+            pstmt.setString(1, instructores.getNombre1());
+            pstmt.setString(2, instructores.getNombre2());
+            pstmt.setString(3, instructores.getNombre3());
+            pstmt.setString(4, instructores.getApellido1());
+            pstmt.setString(5, instructores.getApellido2());
+            pstmt.setString(6, instructores.getDireccion());
+            pstmt.setString(7, instructores.getEmail());
+            pstmt.setString(8, instructores.getTelefono());
+            pstmt.setString(9, instructores.getFechaNacimiento().toString());
 
             //FALTA LA FECHA DE NACIMIENTO
             System.out.println(pstmt.toString());
@@ -255,10 +252,10 @@ public class InstructoresController implements Initializable {
         return false;
 
     }
-    
+
     private boolean actualizarInstructor() {
         Instructores instructores = new Instructores();
-        
+
         instructores.setId(Integer.valueOf(txtId.getText()));
         instructores.setNombre1(txtNombre1.getText());
         instructores.setNombre2(txtNombre2.getText());
@@ -268,11 +265,11 @@ public class InstructoresController implements Initializable {
         instructores.setDireccion(txtDireccion.getText());
         instructores.setEmail(txtEmail.getText());
         instructores.setTelefono(txtTelefono.getText());
-        
-        LocalDate fecha = dpFechaNacimiento.getValue(); 
-        java.sql.Date fecha2 = java.sql.Date.valueOf(dpFechaNacimiento.getValue().toString());
-        
-        instructores.setFechaNacimiento(fecha2);
+
+        /*LocalDate fecha = dpFechaNacimiento.getValue();
+        java.sql.Date fecha2 = java.sql.Date.valueOf(dpFechaNacimiento.getValue().toString());*/
+
+        instructores.setFechaNacimiento(dpFechaNacimiento.getValue());
 
         PreparedStatement pstmt = null;
 
@@ -288,7 +285,7 @@ public class InstructoresController implements Initializable {
             pstmt.setString(7, instructores.getDireccion());
             pstmt.setString(8, instructores.getEmail());
             pstmt.setString(9, instructores.getTelefono());
-            pstmt.setString(10, instructores.getFechaNacimiento().toString());
+            pstmt.setObject(10, instructores.getFechaNacimiento());
 
             System.out.println(pstmt.toString());
             pstmt.execute();
@@ -309,6 +306,39 @@ public class InstructoresController implements Initializable {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        return false;
+    }
+    
+    private boolean eliminarInstructor() {
+        if (existeElementoSeleccionado()) {
+            Instructores instructor = (Instructores) tblInstructores.getSelectionModel().getSelectedItem();
+            System.out.println(instructor.toString());
+
+            PreparedStatement pstmt = null;
+            try {
+                pstmt = Conexion.getInstance().getConexion().prepareCall("{call sp_instructores_delete(?)}");
+                pstmt.setInt(1, instructor.getId());
+                System.out.println(pstmt.toString());
+
+                pstmt.execute();
+                return true;
+
+            } catch (SQLException e) {
+                System.err.println("\nSe produjo un error al intentar eliminar el alumno: " + instructor.toString());
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (pstmt != null) {
+                        pstmt.close();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
         return false;
     }
@@ -336,7 +366,7 @@ public class InstructoresController implements Initializable {
                 instructores.setDireccion(rs.getString(7));
                 instructores.setEmail(rs.getString(8));
                 instructores.setTelefono(rs.getString(9));
-                instructores.setFechaNacimiento(rs.getDate(10));
+                instructores.setFechaNacimiento(rs.getDate(10).toLocalDate());
 
                 //FALTA LA FECHA DE NACIMIENTO
                 lista.add(instructores);
@@ -378,7 +408,6 @@ public class InstructoresController implements Initializable {
         txtDireccion.setEditable(true);
         txtEmail.setEditable(true);
         txtTelefono.setEditable(true);
-        //dpFechaNacimiento.setEditable(true);
 
         txtId.setDisable(true);
         txtNombre1.setDisable(false);
@@ -389,7 +418,7 @@ public class InstructoresController implements Initializable {
         txtDireccion.setDisable(false);
         txtEmail.setDisable(false);
         txtTelefono.setDisable(false);
-        //dpFechaNacimiento.setDisable(false);
+        dpFechaNacimiento.setDisable(false);
     }
 
     private void deshabilitarCampos() {
@@ -402,7 +431,6 @@ public class InstructoresController implements Initializable {
         txtDireccion.setEditable(false);
         txtEmail.setEditable(false);
         txtTelefono.setEditable(false);
-        //dpFechaNacimiento.setEditable(false);
 
         txtId.setDisable(true);
         txtNombre1.setDisable(true);
@@ -413,7 +441,7 @@ public class InstructoresController implements Initializable {
         txtDireccion.setDisable(true);
         txtEmail.setDisable(true);
         txtTelefono.setDisable(true);
-        //dpFechaNacimiento.setDisable(true);
+        dpFechaNacimiento.setDisable(true);
     }
 
     private void limpiarCampos() {
@@ -426,7 +454,7 @@ public class InstructoresController implements Initializable {
         txtDireccion.clear();
         txtEmail.clear();
         txtTelefono.clear();
-        //dpFechaNacimiento.getValue();
+        dpFechaNacimiento.getEditor().clear();
 
     }
 
@@ -438,8 +466,8 @@ public class InstructoresController implements Initializable {
                 habilitarCampos();
                 tblInstructores.setDisable(true);
 
-                txtId.setEditable(true);
-                txtId.setDisable(false);
+                txtId.setEditable(false);
+                txtId.setDisable(true);
 
                 limpiarCampos();
                 btnNuevo.setText("Guardar");
@@ -465,17 +493,7 @@ public class InstructoresController implements Initializable {
 
             case GUARDAR:
 
-                if (txtId.getText().isEmpty()) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Control Académico Kinal");
-                    alert.setHeaderText(null);
-                    alert.setContentText("El campo ID es obligatorio");
-                    Stage dialog = new Stage();
-                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                    stage.getIcons().add(new Image(PAQUETE_IMAGES + "logo.png"));
-                    alert.show();
-
-                } else if (txtNombre1.getText().isEmpty()) {
+                if (txtNombre1.getText().isEmpty()) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Control Académico Kinal");
                     alert.setHeaderText(null);
@@ -514,7 +532,16 @@ public class InstructoresController implements Initializable {
                     Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
                     stage.getIcons().add(new Image(PAQUETE_IMAGES + "logo.png"));
                     alert.show();
-
+                    
+                } else if (dpFechaNacimiento.getValue() == null) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Control Académico Kinal");
+                    alert.setHeaderText(null);
+                    alert.setContentText("El campo Fecha Nacimiento es obligatorio");
+                    Stage dialog = new Stage();
+                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    stage.getIcons().add(new Image(PAQUETE_IMAGES + "logo.png"));
+                    alert.show();
                 } else {
                     if (agregarInstructor()) {
                         cargarDatos();
@@ -581,6 +608,9 @@ public class InstructoresController implements Initializable {
                     alert.setTitle("Control Académico Kinal");
                     alert.setHeaderText(null);
                     alert.setContentText("Antes de continuar seleccione un registro");
+                    Stage dialog = new Stage();
+                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    stage.getIcons().add(new Image(PAQUETE_IMAGES + "logo.png"));
                     alert.show();
                 }
 
@@ -680,8 +710,58 @@ public class InstructoresController implements Initializable {
                 btnReporte.setVisible(true);
                 imgReporte.setVisible(true);
 
-                operacion = InstructoresController.Operacion.NINGUNO;
+                limpiarCampos();
+                deshabilitarCampos();
 
+                tblInstructores.getSelectionModel().clearSelection();
+
+                operacion = Operacion.NINGUNO;
+
+                break;
+
+            case NINGUNO:
+
+                if (existeElementoSeleccionado()) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Control Académico Kinal");
+                    alert.setHeaderText(null);
+                    Stage dialog = new Stage();
+                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    stage.getIcons().add(new Image(PAQUETE_IMAGES + "logo.png"));
+                    alert.setContentText("¿Desea eliminar el registro seleccionado?");
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get().equals(ButtonType.OK)) {
+                        if (eliminarInstructor()) {
+                            listaInstructores.remove(tblInstructores.getSelectionModel().getFocusedIndex());
+                            limpiarCampos();
+                            cargarDatos();
+
+                            alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Control Académico Kinal");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Registro eliminado exitosamente");
+                            dialog = new Stage();
+                            stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                            stage.getIcons().add(new Image(PAQUETE_IMAGES + "logo.png"));
+                            alert.show();
+                        }
+
+                    } else if (result.get().equals(ButtonType.CANCEL)) {
+                        alert.close();
+                        tblInstructores.getSelectionModel().clearSelection();
+                        limpiarCampos();
+                    }
+
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Control Académico Kinal");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Antes de continuar seleccione un registro");
+                    Stage dialog = new Stage();
+                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    stage.getIcons().add(new Image(PAQUETE_IMAGES + "logo.png"));
+                    alert.show();
+                }
                 break;
         }
     }

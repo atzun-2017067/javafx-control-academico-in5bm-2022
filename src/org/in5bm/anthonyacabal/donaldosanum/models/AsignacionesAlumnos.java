@@ -13,10 +13,11 @@ import javafx.beans.property.StringProperty;
  * @author Anthony Acabal
  */
 public class AsignacionesAlumnos {
-    private SimpleIntegerProperty id;
-    private SimpleStringProperty alumnoId;
-    private SimpleIntegerProperty cursoId;
-    private SimpleObjectProperty <LocalDate> fechaAsignacion;
+    private IntegerProperty id;
+    private StringProperty alumnoId;
+    private IntegerProperty cursoId;
+    private ObjectProperty <LocalDate> fechaAsignacion;
+   
 
     public AsignacionesAlumnos() {
         this.id = new SimpleIntegerProperty();
@@ -88,7 +89,7 @@ public class AsignacionesAlumnos {
     
     @Override
     public String toString() {
-        return "AsignacionAlumnos{" + "Id=" + id + ", Carné=" + alumnoId + ", Curso=" + cursoId + ", Fecha Asignacion=" + fechaAsignacion + '}';
+        return id + " | " + fechaAsignacion;
     }
 
     

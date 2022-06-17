@@ -1,6 +1,7 @@
 package org.in5bm.anthonyacabal.donaldosanum.models;
 
 import com.jfoenix.controls.JFXDatePicker;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -22,7 +23,7 @@ public class Instructores {
     private String direccion;
     private String email;
     private String telefono;
-    private Date fechaNacimiento;
+    private LocalDate fechaNacimiento;
 
     public Instructores() {
 
@@ -36,7 +37,7 @@ public class Instructores {
         this.telefono = telefono;
     }
 
-    public Instructores(int id, String nombre1, String nombre2, String nombre3, String apellido1, String apellido2, String direccion, String email, String telefono, Date fechaNacimiento) {
+    public Instructores(int id, String nombre1, String nombre2, String nombre3, String apellido1, String apellido2, String direccion, String email, String telefono, LocalDate fechaNacimiento) {
         this.id = id;
         this.nombre1 = nombre1;
         this.nombre2 = nombre2;
@@ -121,19 +122,17 @@ public class Instructores {
         this.telefono = telefono;
     }
 
-    public Date getFechaNacimiento() {
+    public LocalDate getFechaNacimiento() {
         return fechaNacimiento;
     }
 
-    public void setFechaNacimiento(Date fechaNacimiento) {
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
 
     @Override
     public String toString() {
-        return "Instructores{" + "id=" + id + ", nombre1=" + nombre1 + ", nombre2=" + nombre2
-                + ", nombre3=" + nombre3 + ", apellido1=" + apellido1 + ", apellido2=" + apellido2
-                + ", direccion=" + direccion + ", email=" + email + ", telefono=" + telefono + ", fechaNacimiento=" + fechaNacimiento + '}';
+        return id + " | " + nombre1 + " | " + apellido1;
     }
 
 }

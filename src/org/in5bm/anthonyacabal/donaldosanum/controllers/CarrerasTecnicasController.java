@@ -482,6 +482,9 @@ public class CarrerasTecnicasController implements Initializable {
                     alert.setTitle("Control Académico Kinal");
                     alert.setHeaderText(null);
                     alert.setContentText("Antes de continuar seleccione un registro");
+                    Stage dialog = new Stage();
+                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    stage.getIcons().add(new Image(PAQUETE_IMAGES + "logo.png"));
                     alert.show();
                 }
 
@@ -602,6 +605,7 @@ public class CarrerasTecnicasController implements Initializable {
                     if (result.get() == ButtonType.OK) {
                         if (eliminarCarrera()) {
                             listaCarrerasTecnicas.remove(tblCarrerasTecnicas.getSelectionModel().getFocusedIndex());
+                            limpiarCampos();
                             cargarDatos();
                             alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Control Académico Kinal");
